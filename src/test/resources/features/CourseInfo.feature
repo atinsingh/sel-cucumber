@@ -17,3 +17,8 @@ Feature: Test Course Info API
     And course name shoud be "FullStack - Java".
     And course code shoudl be "JAVA-FULL".
     And Intrctor count should be 3.
+
+  Scenario:
+    Given User have access to url "https://app.pragra.io".
+    When user call end point "/api/testimonial"
+    Then  status code should be 201

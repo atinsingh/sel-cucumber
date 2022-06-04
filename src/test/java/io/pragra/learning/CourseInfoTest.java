@@ -4,13 +4,18 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.pragra.learning.domain.Testimonial;
 import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
+import io.restassured.specification.RequestSpecification;
 
 import static org.hamcrest.CoreMatchers.*;
 
 public class CourseInfoTest {
     ValidatableResponse response;
+    Response post;
     @Given("User have access to url {string}.")
     public void userHaveAccessToUrl(String url) {
         System.out.println("arg0 = " + url);
@@ -52,5 +57,31 @@ public class CourseInfoTest {
     @And("Intrctor count should be {int}.")
     public void intrctorCountShouldBe(int count) {
         response.assertThat().body("instructor[0].name", equalTo("Vivek Chaudhary") );
+    }
+
+    @When("user call end point {string}")
+    public void userCallEndPoint(String endpoint) {
+        Testimonial testimonial = new Testimonial();
+        testimonial.setClientName("Edward");
+        testimonial.setClientTitle("CEO");
+        testimonial.setClientCompany("Aviva");
+        testimonial.setTestimonial("Learning was fun");
+        testimonial.setImageUrl("");
+
+        RequestSpecification specs = new RequestSpecBuilder()
+                .addHeader("Content-Type", "application/json")
+                .setBody(testimonial)
+                .build();
+
+        post = RestAssured.given(specs)
+                .when().post(endpoint);
+
+
+    }
+
+    @Then("status code should be {int}")
+    public void statusCodeShouldBe(int status) {
+        post.then().assertThat().statusCode(status);
+        post.then().assertThat().body("clientName", equalTo("Edward"));
     }
 }
